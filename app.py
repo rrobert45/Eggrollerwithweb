@@ -36,6 +36,37 @@ last_relay_on = time.time()
 global temperature
 global humidity
 
+def read_sensor_data():
+    # Read the humidity and temperature
+    humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+    if humidity is not None and temperature is not None:
+        temperature = (temperature * 9/5) + 32
+        return round(temperature,0), round(humidity,0)
+    else:
+        print('Failed to read data from sensor')
+        return None, None
+
+def log_data(temperature, humidity, relay_status):
+    # Log the temperature and humidity data
+    temp_humidity_writer.writerow([time.strftime("%Y-%m-%d %H:%M:%S"), temperature, humidity])
+    temp_humidity_file.flush()
+    relay_writer.writerow([time.strftime("%Y-%m-%d %H:%M:%S"), relay_status])
+    relay_file.flush()
+
+def check_relay():
+    current_time = time.time()
+    if current_time - last_relay_on >= relay_interval:
+        # Turn on the relay for 2 minutes
+        GPIO.output(relay, GPIO.HIGH)
+        log_data(None, None, "ON")
+        time.sleep(120)
+        GPIO.output(relay, GPIO.LOW)
+        log_data(None, None, "OFF")
+        print("relay has been turned on")
+        last_relay_on = current_time
+    else:
+        log_data(None, None, "OFF")
+
 def read_and_log_data():
     try:
         while True:
