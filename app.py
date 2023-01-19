@@ -3,6 +3,7 @@ import time
 import Adafruit_DHT
 import RPi.GPIO as GPIO
 import csv
+from threading import Thread
 
 
 app = Flask(__name__)
@@ -88,7 +89,8 @@ def read_and_log_data():
 
 @app.route("/")
 def index():
-    read_and_log_data()
+    thread = Thread(target=read_and_log_data)
+    thread.start()
     return render_template("index.html", temperature=temperature, humidity=humidity)
 
 if __name__ == "__main__":
