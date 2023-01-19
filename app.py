@@ -4,6 +4,7 @@ import Adafruit_DHT
 import RPi.GPIO as GPIO
 import csv
 
+
 app = Flask(__name__)
 
 # Set the sensor type (DHT22) and the GPIO pin number
@@ -71,7 +72,7 @@ def read_and_log_data():
     try:
         while True:
             temperature, humidity = read_sensor_data()
-            log_data(temperature, humidity)
+            log_data(temperature, humidity, last_relay_on)
             check_relay()
             time.sleep(log_interval)
     except KeyboardInterrupt:
