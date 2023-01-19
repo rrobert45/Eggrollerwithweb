@@ -55,18 +55,20 @@ def log_data(temperature, humidity, relay_status):
     relay_file.flush()
 
 def check_relay():
+    global last_relay_on
     current_time = time.time()
     if current_time - last_relay_on >= relay_interval:
         # Turn on the relay for 2 minutes
         GPIO.output(relay, GPIO.HIGH)
+        last_relay_on = current_time
         log_data(None, None, "ON")
         time.sleep(120)
         GPIO.output(relay, GPIO.LOW)
         log_data(None, None, "OFF")
         print("relay has been turned on")
-        last_relay_on = current_time
     else:
         log_data(None, None, "OFF")
+
 
 def read_and_log_data():
     try:
