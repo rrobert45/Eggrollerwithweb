@@ -97,7 +97,7 @@ def index():
     thread = Thread(target=read_and_log_data)
     thread.start()
     temperature, humidity, last_relay_on = data_queue.get()
-    last_relay_on_date=datetime.datetime.fromtimestamp(last_relay_on).strftime('%Y-%m-%d %H:%M:%S')
+    last_relay_on_date=datetime.datetime.fromtimestamp(last_relay_on).strftime('%d-%m-%Y  %H:%M:%S %p')
     return render_template("index.html", temperature=temperature, humidity=humidity, last_relay_on=last_relay_on_date)
 
 if __name__ == "__main__":
