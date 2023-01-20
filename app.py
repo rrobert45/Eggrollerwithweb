@@ -72,6 +72,8 @@ def check_relay():
 
 
 def read_and_log_data():
+    global temperature
+    global humidity
     try:
         while True:
             temperature, humidity = read_sensor_data()
