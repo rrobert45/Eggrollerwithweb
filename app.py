@@ -4,6 +4,7 @@ import Adafruit_DHT
 import RPi.GPIO as GPIO
 import csv
 from threading import Thread
+from queue import Queue
 
 
 app = Flask(__name__)
@@ -37,6 +38,8 @@ last_relay_on = time.time()
 # Global variables to store the temperature and humidity values
 global temperature
 global humidity
+
+data_queue = Queue()
 
 def read_sensor_data():
     # Read the humidity and temperature
@@ -72,11 +75,10 @@ def check_relay():
 
 
 def read_and_log_data():
-    global temperature
-    global humidity
     try:
         while True:
             temperature, humidity = read_sensor_data()
+            data_queue.put((temperature, humidity))
             log_data(temperature, humidity, last_relay_on)
             check_relay()
             time.sleep(log_interval)
@@ -93,7 +95,8 @@ def read_and_log_data():
 def index():
     thread = Thread(target=read_and_log_data)
     thread.start()
+    temperature, humidity = data_queue.get()
     return render_template("index.html", temperature=temperature, humidity=humidity)
-
+    
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
