@@ -95,7 +95,7 @@ def read_and_log_data():
 def index():
     thread = Thread(target=read_and_log_data)
     thread.start()
-    temperature, humidity = data_queue.get()
+    temperature, humidity, last_relay_on = data_queue.get()
     return render_template("index.html", temperature=temperature, humidity=humidity, last_relay_on=last_relay_on)
 
 if __name__ == "__main__":
