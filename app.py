@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 import csv
 from threading import Thread
 from queue import Queue
+import datetime
 
 
 app = Flask(__name__)
@@ -96,7 +97,8 @@ def index():
     thread = Thread(target=read_and_log_data)
     thread.start()
     temperature, humidity, last_relay_on = data_queue.get()
-    return render_template("index.html", temperature=temperature, humidity=humidity, last_relay_on=last_relay_on)
+    last_relay_on_date=datetime.datetime.fromtimestamp(last_relay_on).strftime('%Y-%m-%d %H:%M:%S')
+    return render_template("index.html", temperature=temperature, humidity=humidity, last_relay_on=last_relay_on_date)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
