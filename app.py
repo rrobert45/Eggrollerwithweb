@@ -78,7 +78,7 @@ def read_and_log_data():
     try:
         while True:
             temperature, humidity = read_sensor_data()
-            data_queue.put((temperature, humidity))
+            data_queue.put((temperature, humidity, last_relay_on))
             log_data(temperature, humidity, last_relay_on)
             check_relay()
             time.sleep(log_interval)
@@ -96,7 +96,7 @@ def index():
     thread = Thread(target=read_and_log_data)
     thread.start()
     temperature, humidity = data_queue.get()
-    return render_template("index.html", temperature=temperature, humidity=humidity)
-    
+    return render_template("index.html", temperature=temperature, humidity=humidity, last_relay_on=last_relay_on)
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
